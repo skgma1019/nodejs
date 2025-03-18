@@ -17,4 +17,8 @@ app.get('/tick', (req, res) => {
 app.get('/asdf', (req, res) => {
     res.send('qwer');
   });
+
+app.get('/abc', (req, res) => {
+    res.send('가나다');
+  });
   
