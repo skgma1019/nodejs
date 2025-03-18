@@ -166,3 +166,15 @@ app.get('/users', (req, res) => {
 app.get('/articles', (req, res) => {
     res.json(articles);
 });
+
+app.get('/test', (req, res)=>{
+    console.log(req.query);
+    console.log(req.query.id);
+    res.send("ok");
+})
+
+app.get('/user/:id', (req, res)=>{
+
+    console.log(req.params.id)
+    res.send('ok')
+})
