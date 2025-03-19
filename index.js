@@ -195,7 +195,10 @@ app.get('/articles/:id', (req, res)=>{
   }
 })
 
-app.post('/articles', (req, res)=>{
+app.po
+
+
+app.delete('/articles', (req, res)=>{
   // let headers = req.headers
   let data = req.body
   
@@ -210,14 +213,24 @@ app.post('/articles', (req, res)=>{
   return res.json("ok")
 })
 
-app.delete('/articles/:id', (req, res) => {
-  const articleId = parseInt(req.params.id); // URL에서 받은 id를 정수로 변환
-  const index = articles.findIndex(article => article.id === articleId);
+//챗gpt꺼
+// app.delete('/articles/:id', (req, res) => {
+//   const articleId = parseInt(req.params.id); // URL에서 받은 id를 정수로 변환
+//   // const index = articles.findIndex(article => article.id === articleId);
 
-  if (index !== -1) {
-    articles.splice(index, 1); // 해당 인덱스의 요소 삭제
-    res.status(200).json({ message: "Article deleted successfully" });
-  } else {
-    res.status(404).json({ error: "Article not found" });
-  }
-});
+//   // if (index !== -1) {
+//   //   articles.splice(index, 1); // 해당 인덱스의 요소 삭제
+//   //   res.status(200).json({ message: "Article deleted successfully" });
+//   // } else {
+//   //   res.status(404).json({ error: "Article not found" });
+//   // }
+// });
+
+
+app.delete('/articles/:id', (req, res)=>{
+  
+  const id = req.params.id
+
+  articles.splice(id-1, 1);
+  res.send('ok')
+})
