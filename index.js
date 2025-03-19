@@ -234,3 +234,7 @@ app.delete('/articles/:id', (req, res)=>{
   articles.splice(id-1, 1);
   res.send('ok')
 })
+
+add.put('/articles/:id', (req, res)=>{
+  res.send('ok')
+})
