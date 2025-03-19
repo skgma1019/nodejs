@@ -10,3 +10,5 @@ git config --global user.email "skgma1019@gmail.com"
 ## Articles Create
 -Post를 써서 만들고
 -Get을 써서 불러온다다
+```
+console.log('Hello World')
