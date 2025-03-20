@@ -32,4 +32,15 @@ app.listen(PORT, () => {
       });
   });
   
-  
+//전체 아티클 리스트 주는 api
+//GET : /articles
+app.get('/articles', (req, res)=>{
+
+    
+
+    res.send('잘 받았다')
+})
+
+
+//개별 아티클을 주는 api
+//GET : /articles/
