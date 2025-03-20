@@ -8,19 +8,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-<<<<<<< HEAD
-  "description": "cd c:\\Desktop",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "nodemon": "^3.1.9",
-    "sqlite3": "^5.1.7"
-=======
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "nodemon": "^3.1.9"
->>>>>>> c8ddfdfa0b7ba3d0a665654201a6eed338e0b04e
   }
 }
