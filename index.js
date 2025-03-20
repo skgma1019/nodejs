@@ -47,4 +47,15 @@ app.get('/articles', (req, res)=>{
 
 //개별 아티클을 주는 api
 //GET : /articles/
-app.get('/articles/:id')
+app.get('/articles/:id', (req, res) => {
+    const id = req.params;
+    db.get('SELECT * FROM articles WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (!row) {
+            return res.status(404).json({ error: 'Article not found' });
+        }
+        res.json(row);
+    });
+});
