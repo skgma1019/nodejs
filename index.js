@@ -19,7 +19,7 @@ app.listen(PORT, () => {
 
 
 
-  app.post('/articles', (req, res) => {
+app.post('/articles', (req, res) => {
     const { title, content } = req.body;
   
     db.run(`INSERT INTO articles (title, content) VALUES (?, ?)`,
@@ -29,18 +29,22 @@ app.listen(PORT, () => {
           return res.status(500).json({error: err.message});
         }
         res.json({id: this.lastID, title, content});
-      });
-  });
+    });
+});
   
 //전체 아티클 리스트 주는 api
 //GET : /articles
 app.get('/articles', (req, res)=>{
 
-    
-
-    res.send('잘 받았다')
-})
+    db.all('SELECT * FROM articles', [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(rows);
+    });
+});
 
 
 //개별 아티클을 주는 api
 //GET : /articles/
+app.get('/articles/:id')
