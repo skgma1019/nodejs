@@ -116,3 +116,34 @@ app.post('/posttest', (req, res)=>{
   console.log(req.body)
   res.send("ok")
 })
+
+app.use(express.json());
+
+app.post("/articles/:id/comments", (req, res) => {
+    const articleId = req.params.id;
+    const content = req.body.content;
+    const createdAt = new Date().toISOString();
+
+    if (!content) {
+        return res.status(400).json({ error: "Content is required" });
+    }
+
+    const query = "INSERT INTO comments (content, created_at, article_id) VALUES (?, ?, ?)";
+    db.run(query, [content, createdAt, articleId], function (err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ id: this.lastID, content, create_at: createdAt, article_id: articleId });
+    });
+});
+
+app.get('/articles/:id/comments', (req, res) => {
+    let articleId = req.params.id;
+
+    db.all('SELECT * FROM comments WHERE article_id = ?', [articleId], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(rows);
+    });
+});
