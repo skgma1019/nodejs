@@ -147,3 +147,21 @@ app.get('/articles/:id/comments', (req, res) => {
         res.json(rows);
     });
 });
+
+//회원가입 API
+app.post('/users', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+      return res.status(400).json({ message: '이메일과 비밀번호를 입력하세요.' });
+  }
+
+  const sql = `INSERT INTO users (email, password) VALUES (?, ?)`;
+  
+  db.run(sql, [email, password], function (err) {
+      if (err) {
+          return res.status(500).json({ message: '회원가입 실패', error: err.message });
+      }
+      res.status(201).json({ message: '회원가입이 완료되었습니다.', userId: this.lastID });
+  });
+});
