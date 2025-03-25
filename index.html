@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ra</title>
- 
-
-
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -83,9 +79,27 @@
         .delete-btn:hover {
             background: #b71c1c;
         }
+        /* 로그인 버튼 스타일 */
+        .login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #5c6bc0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .login-btn:hover {
+            background: #3949ab;
+        }
     </style>
 </head>
 <body>
+    <button class="login-btn" onclick="location.href='login.html'">로그인</button> <!-- 로그인 페이지로 이동 -->
     <div class="container">
         <h1>게시판</h1>
         <form id="articleForm">
