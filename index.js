@@ -165,3 +165,28 @@ app.post('/users', (req, res) => {
       res.status(201).json({ message: '회원가입이 완료되었습니다.', userId: this.lastID });
   });
 });
+
+//로그인 APT
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+      return res.status(400).json({ message: '이메일과 비밀번호를 입력하세요.' });
+  }
+  
+  const query = 'SELECT * FROM users WHERE email = ?';
+  db.get(query, [email], (err, row) => {
+      if (err) {
+          return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+      }
+      if (!row) {
+          return res.json({ message: '이메일이 없습니다.' });
+      }
+      
+      if (row.password !== password) {
+          return res.json({ message: '패스워드가 틀립니다.' });
+      }
+      
+      res.json({ message: '로그인 성공!' });
+  });
+});
