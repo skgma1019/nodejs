@@ -43,22 +43,25 @@ module.exports = authMiddleware;
   
 //게시글 작성 API
 app.post("/articles", authMiddleware, (req, res) => {
-console.log(req.user.id)
-
   let { title, content } = req.body;
+  let userId = req.user.id; // 인증된 사용자 ID 가져오기
 
-  // 인증된 사용자만 게시글을 작성할 수 있음
   if (!title || !content) {
       return res.status(400).json({ message: '제목과 내용을 입력하세요.' });
   }
 
-  db.run(`INSERT INTO articles (title, content) VALUES (?, ?)`, [title, content], function(err) {
-      if (err) {
-          return res.status(500).json({ error: err.message });
+  db.run(
+      `INSERT INTO articles (title, content, user_id) VALUES (?, ?, ?)`,
+      [title, content, userId],
+      function (err) {
+          if (err) {
+              return res.status(500).json({ error: err.message });
+          }
+          res.json({ id: this.lastID, title, content, user_id: userId });
       }
-      res.json({ id: this.lastID, title, content });
-  });
+  );
 });
+
 
 // 커밋 한번해주세요
 
@@ -67,7 +70,11 @@ console.log(req.user.id)
 //게시글 리스트 확인 (로그인 불필요요)
 app.get('/articles',(req, res)=>{
 
-    db.all("SELECT * FROM articles", [], (err, rows) => {
+    db.all(`SELECT articles.id, articles.title, articles.content, users.email
+           FROM articles
+           JOIN users ON articles.user_id = users.id`,
+           [],
+           (err, rows) => {
         if (err) {
           return res.status(500).json({ error: err.message });
         }
@@ -155,33 +162,42 @@ app.post('/posttest', (req, res)=>{
 //댓글작성
 //로그인 필요요
 app.post("/articles/:id/comments", authMiddleware, (req, res) => {
-    const articleId = req.params.id;
-    const content = req.body.content;
-    const createdAt = new Date().toISOString();
+  const articleId = req.params.id;
+  const content = req.body.content;
+  const userId = req.user.id; // 인증된 사용자 ID 가져오기
+  const createdAt = new Date().toISOString();
 
-    if (!content) {
-        return res.status(400).json({ error: "Content is required" });
-    }
+  if (!content) {
+      return res.status(400).json({ error: "Content is required" });
+  }
 
-    const query = "INSERT INTO comments (content, created_at, article_id) VALUES (?, ?, ?)";
-    db.run(query, [content, createdAt, articleId], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(201).json({ id: this.lastID, content, create_at: createdAt, article_id: articleId });
-    });
+  const query = "INSERT INTO comments (content, created_at, article_id, user_id) VALUES (?, ?, ?, ?)";
+  db.run(query, [content, createdAt, articleId, userId], function (err) {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+      res.status(201).json({ id: this.lastID, content, created_at: createdAt, article_id: articleId, user_id: userId });
+  });
 });
+
 
 //댓글 확인인
 app.get('/articles/:id/comments', (req, res) => {
-    let articleId = req.params.id;
+  const articleId = req.params.id;
 
-    db.all('SELECT * FROM comments WHERE article_id = ?', [articleId], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
-    });
+  const query = `
+      SELECT comments.id, comments.content, comments.created_at, users.email 
+      FROM comments
+      JOIN users ON comments.user_id = users.id
+      WHERE comments.article_id = ?
+  `;
+
+  db.all(query, [articleId], (err, rows) => {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+  });
 });
 
 //회원가입 API
