@@ -19,9 +19,30 @@ const db = new sqlite3.Database('./database.db');
 app.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
   });
+
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader) {
+    return res.status(401).json({ message: '토큰이 없습니다.' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: '토큰이 유효하지 않습니다.' });
+    }
+    req.user = decoded; // 토큰에 있는 사용자 정보 저장
+    next(); // 다음 미들웨어 또는 라우트 핸들러 실행
+  });
+};
+
+module.exports = authMiddleware;
+
   
 //게시글 작성 API
-app.post("/articles", authenticateToken, (req, res) => {
+app.post("/articles", authMiddleware, (req, res) => {
   let { title, content } = req.body;
 
   // 인증된 사용자만 게시글을 작성할 수 있음
@@ -41,7 +62,7 @@ app.post("/articles", authenticateToken, (req, res) => {
 
 // 전체 아티클 리스트 주는 api를 만들어주세요
 // GET : /articles
-
+//게시글 리스트 확인 (로그인 불필요요)
 app.get('/articles',(req, res)=>{
 
     db.all("SELECT * FROM articles", [], (err, rows) => {
@@ -55,6 +76,7 @@ app.get('/articles',(req, res)=>{
 
 // 개별 아티클을 주는 api를 만들어주세요 
 // GET : /articles/:id
+// 로그인 불필요요
 app.get('/articles/:id', (req, res)=>{
     let id = req.params.id
 
@@ -70,9 +92,11 @@ app.get('/articles/:id', (req, res)=>{
 
 })
 
-
-app.delete("/articles/:id", (req, res)=>{
-  const id = req.params.id
+//게시글삭제제 
+// 로그인 필요
+// 게시글이 본인인지 확인도 필요(추후적용예정)
+app.delete("/articles/:id", authMiddleware, (req, res)=>{
+  const id = Number(req.params.id);
 
 
   const sql = 'DELETE FROM articles WHERE id = ?';
@@ -87,7 +111,9 @@ app.delete("/articles/:id", (req, res)=>{
 
 })
 
-app.put('/articles/:id', (req, res)=>{
+// 로그인 필요
+// 게시글이 본인인지 확인도 필요(추후적용예정)
+app.put('/articles/:id', authMiddleware, (req, res)=>{
   let id = req.params.id
   // let title = req.body.title
   // let content = req.body.content
@@ -124,7 +150,9 @@ app.post('/posttest', (req, res)=>{
   res.send("ok")
 })
 
-app.post("/articles/:id/comments", (req, res) => {
+//댓글작성
+//로그인 필요요
+app.post("/articles/:id/comments", authMiddleware, (req, res) => {
     const articleId = req.params.id;
     const content = req.body.content;
     const createdAt = new Date().toISOString();
@@ -142,6 +170,7 @@ app.post("/articles/:id/comments", (req, res) => {
     });
 });
 
+//댓글 확인인
 app.get('/articles/:id/comments', (req, res) => {
     let articleId = req.params.id;
 
@@ -154,6 +183,7 @@ app.get('/articles/:id/comments', (req, res) => {
 });
 
 //회원가입 API
+//로그인 불필요
 app.post('/users', async (req, res) => {
   const { email, password } = req.body;
 
@@ -178,6 +208,7 @@ app.post('/users', async (req, res) => {
 
 
 //로그인 API
+//로그인 불필요
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -209,7 +240,7 @@ app.post('/login', (req, res) => {
 app.get('/logintest', (req, res)=>{
   let token = req.headers.authorization.split(' ')[1]
 
-  jwt.verify(token, 'your_secret_key', (err, decoded)=>{
+  jwt.verify(token, secretKey, (err, decoded)=>{
     if(err){
       return res.send('에러!')
     }
