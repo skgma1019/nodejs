@@ -43,6 +43,8 @@ module.exports = authMiddleware;
   
 //게시글 작성 API
 app.post("/articles", authMiddleware, (req, res) => {
+console.log(req.user.id)
+
   let { title, content } = req.body;
 
   // 인증된 사용자만 게시글을 작성할 수 있음
