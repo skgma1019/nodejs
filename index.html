@@ -3,297 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시판</title>
+    <title>ra</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            padding: 20px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #444;
-        }
-
-        .form-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .form-container h3 {
-            text-align: center;
-            color: #555;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #articlesContainer {
-            max-width: 800px;
-            margin: 20px auto;
-        }
-
-        .article {
-            background-color: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .article h4 {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-image: url('https://upload-os-bbs.hoyolab.com/upload/2022/09/16/249488195/a5c9b0c5fa06b15ff86ae802ca3b589b_6761320286794481076.jpg');
+            background-size: cover;
+            background-attachment: fixed;
             margin: 0;
-            color: #333;
+            padding: 0;
+            text-align: center;
         }
-
-        .article p {
-            color: #555;
-            margin: 10px 0;
+        .container {
+            width: 60%;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            margin-top: 50px;
         }
-
-        .article .author {
-            font-size: 12px;
-            color: #888;
+        h1 {
+            color: #1a237e;
+            font-weight: bold;
         }
-
-        .comment {
-            background-color: #f9f9f9;
+        form {
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            width: 90%;
             padding: 10px;
-            margin-top: 10px;
-            border-radius: 8px;
+            margin: 5px 0;
+            border: 2px solid #1a237e;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
         }
-
-        .comment p {
-            color: #444;
+        button {
+            background: #5c6bc0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
         }
-
-        .comment .author {
-            font-size: 12px;
-            color: #888;
+        button:hover {
+            background: #3949ab;
         }
-
+        .article {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            position: relative;
+        }
+        .article h3 {
+            color: #283593;
+        }
+        .delete-btn, .edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .delete-btn:hover, .edit-btn:hover {
+            background: #b71c1c;
+        }
+        .login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #5c6bc0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .login-btn:hover {
+            background: #3949ab;
+        }
         .comment-form {
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
+        }
+        .comment-form textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .comments {
             margin-top: 20px;
+        }
+        .comment {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
     </style>
 </head>
 <body>
-
-    <h2>게시판</h2>
-
-    <!-- 회원가입 -->
-    <div class="form-container" id="signupFormContainer">
-        <h3>회원가입</h3>
-        <input type="email" id="signupEmail" placeholder="이메일" required>
-        <input type="password" id="signupPassword" placeholder="비밀번호" required>
-        <button onclick="signup()">회원가입</button>
-    </div>
-
-    <!-- 로그인 -->
-    <div class="form-container" id="loginFormContainer">
-        <h3>로그인</h3>
-        <input type="email" id="loginEmail" placeholder="이메일" required>
-        <input type="password" id="loginPassword" placeholder="비밀번호" required>
-        <button onclick="login()">로그인</button>
-    </div>
-
-    <!-- 게시글 작성 -->
-    <div class="form-container" id="articleFormContainer" style="display: none;">
-        <h3>게시글 작성</h3>
-        <input type="text" id="articleTitle" placeholder="제목" required>
-        <textarea id="articleContent" placeholder="내용" required></textarea>
-        <button onclick="createArticle()">게시글 작성</button>
-    </div>
-
-    <!-- 게시글 목록 -->
-    <div id="articlesContainer">
-        <h3>게시글 목록</h3>
+    <button class="login-btn" onclick="location.href='login.html'">로그인</button>
+    <div class="container">
+        <h1>게시판</h1>
+        <form id="articleForm">
+            <input type="text" id="title" placeholder="제목" required><br>
+            <textarea id="content" placeholder="내용" required></textarea><br>
+            <button type="submit">게시글 작성</button>
+        </form>
         <div id="articles"></div>
     </div>
 
-    <!-- 댓글 작성 -->
-    <div class="comment-form" id="commentFormContainer" style="display: none;">
-        <textarea id="commentContent" placeholder="댓글을 입력하세요" required></textarea>
-        <button onclick="createComment()">댓글 작성</button>
-    </div>
-
     <script>
-        let token = localStorage.getItem('token');
-
-        // 회원가입
-        async function signup() {
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-
-            const response = await fetch('http://localhost:3000/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                alert('회원가입 성공');
-            } else {
-                alert('회원가입 실패: ' + data.message);
-            }
-        }
-
-        // 로그인
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem('token', data.token); // 로그인 성공 시 토큰 저장
-                token = data.token;
-                alert('로그인 성공');
-                document.getElementById('loginFormContainer').style.display = 'none';
-                document.getElementById('articleFormContainer').style.display = 'block';
-                fetchArticles();
-            } else {
-                alert('로그인 실패: ' + data.message);
-            }
-        }
-
-        // 게시글 작성
-        async function createArticle() {
-            const title = document.getElementById('articleTitle').value;
-            const content = document.getElementById('articleContent').value;
-
-            const response = await fetch('http://localhost:3000/articles', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ title, content })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                alert('게시글 작성 성공');
-                fetchArticles();
-            } else {
-                alert('게시글 작성 실패: ' + data.message);
-            }
-        }
-
-        // 게시글 목록 조회
         async function fetchArticles() {
             const response = await fetch('http://localhost:3000/articles');
             const articles = await response.json();
             const articlesDiv = document.getElementById('articles');
-            articlesDiv.innerHTML = ''; // 이전 목록 지우기
-
-            articles.forEach(article => {
+            articlesDiv.innerHTML = '';
+            
+            articles.slice().reverse().forEach(article => {
                 const articleElement = document.createElement('div');
                 articleElement.classList.add('article');
                 articleElement.innerHTML = `
-                    <h4>${article.title}</h4>
-                    <p>${article.content}</p>
-                    <small class="author">작성자: ${article.email}</small>
-                    <button onclick="showCommentForm(${article.id})">댓글 달기</button>
-                    <div id="comments-${article.id}"></div>
+                    <h3 id="title-${article.id}">${article.title}</h3>
+                    <p id="content-${article.id}">${article.content}</p>
+                    <small>${article.email}</small>
+                    <button class="delete-btn" onclick="deleteArticle(${article.id})">삭제</button>
+                    <button class="edit-btn" onclick="editArticle(${article.id})">수정</button>
+                    <div class="comments" id="comments-${article.id}">
+                        <h4>댓글</h4>
+                        <div id="comments-list-${article.id}"></div>
+                        <div class="comment-form">
+                            <textarea id="comment-content-${article.id}" placeholder="댓글을 작성하세요..."></textarea>
+                            <button onclick="submitComment(${article.id})">댓글 작성</button>
+                        </div>
+                    </div>
                 `;
                 articlesDiv.appendChild(articleElement);
-
-                fetchComments(article.id); // 각 게시글에 댓글 조회
+                fetchComments(article.id);
             });
         }
 
-        // 댓글 작성
-        async function createComment() {
-            const content = document.getElementById('commentContent').value;
-            const articleId = window.currentArticleId; // 선택된 게시글 ID
+        async function fetchComments(articleId) {
+            const response = await fetch(`http://localhost:3000/articles/${articleId}/comments`);
+            const comments = await response.json();
+            const commentsList = document.getElementById(`comments-list-${articleId}`);
+            commentsList.innerHTML = '';
+
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.classList.add('comment');
+                commentElement.innerHTML = ` 
+                    <p>${comment.content}</p>
+                    <small>${comment.email} - ${comment.created_at}</small>
+                `;
+                commentsList.appendChild(commentElement);
+            });
+        }
+
+        async function submitComment(articleId) {
+            const content = document.getElementById(`comment-content-${articleId}`).value;
+            if (!content) {
+                return alert('댓글을 입력해주세요!');
+            }
 
             const response = await fetch(`http://localhost:3000/articles/${articleId}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({ content })
             });
 
-            const data = await response.json();
             if (response.ok) {
-                alert('댓글 작성 성공');
                 fetchComments(articleId);
-            } else {
-                alert('댓글 작성 실패: ' + data.message);
+                document.getElementById(`comment-content-${articleId}`).value = '';
             }
         }
 
-        // 댓글 목록 조회
-        async function fetchComments(articleId) {
-            const response = await fetch(`http://localhost:3000/articles/${articleId}/comments`);
-            const comments = await response.json();
-            const commentsDiv = document.getElementById(`comments-${articleId}`);
-            commentsDiv.innerHTML = ''; // 이전 댓글 목록 지우기
+        async function deleteArticle(id) {
+            try {
+                const response = await fetch(`http://localhost:3000/articles/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
 
-            comments.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.classList.add('comment');
-                commentElement.innerHTML = `
-                    <p>${comment.content}</p>
-                    <small class="author">작성자: ${comment.email}</small>
-                `;
-                commentsDiv.appendChild(commentElement);
+                if (response.ok) {
+                    alert('게시글이 삭제되었습니다.');
+                    fetchArticles();
+                } else {
+                    alert('게시글 삭제에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('삭제 실패:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        async function editArticle(id) {
+            const title = document.getElementById(`title-${id}`).innerText;
+            const content = document.getElementById(`content-${id}`).innerText;
+
+            const newTitle = prompt('수정할 제목을 입력하세요:', title);
+            const newContent = prompt('수정할 내용을 입력하세요:', content);
+
+            if (newTitle && newContent) {
+                const response = await fetch(`http://localhost:3000/articles/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ title: newTitle, content: newContent })
+                });
+
+                if (response.ok) {
+                    alert('게시글이 수정되었습니다.');
+                    fetchArticles();
+                } else {
+                    alert('게시글 수정에 실패했습니다.');
+                }
+            }
+        }
+
+        document.getElementById('articleForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            const response = await fetch('http://localhost:3000/articles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ title, content })
             });
-        }
 
-        // 댓글 입력 폼 표시
-        function showCommentForm(articleId) {
-            window.currentArticleId = articleId;
-            document.getElementById('commentFormContainer').style.display = 'block';
-        }
+            if (response.ok) {
+                fetchArticles();
+                document.getElementById('articleForm').reset();
+            }
+        });
 
-        // 초기화
-        if (token) {
-            document.getElementById('loginFormContainer').style.display = 'none';
-            document.getElementById('articleFormContainer').style.display = 'block';
-            fetchArticles();
-        }
+        fetchArticles();
     </script>
 </body>
 </html>

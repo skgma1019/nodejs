@@ -104,41 +104,80 @@ app.get('/articles/:id', (req, res)=>{
 //게시글삭제제 
 // 로그인 필요
 // 게시글이 본인인지 확인도 필요(추후적용예정)
-app.delete("/articles/:id", authMiddleware, (req, res)=>{
-  const id = Number(req.params.id);
+app.delete("/articles/:id", authMiddleware, (req, res) => {
+  const userId = req.user.id; // 요청한 사용자의 id
+  const articleId = req.params.id; // 삭제할 아티클의 id
 
-
-  const sql = 'DELETE FROM articles WHERE id = ?';
-  db.run(sql, id, function(err) {
+  // 1. 삭제할 아티클의 user_id를 조회합니다.
+  const sql = 'SELECT user_id FROM articles WHERE id = ?';
+  db.get(sql, [articleId], (err, row) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: err.message });
     }
-    // this.changes는 영향을 받은 행의 수
-    res.json({ message: `총 ${this.changes}개의 아티클이 삭제되었습니다.` });
-  });
+    
+    // 2. 아티클이 없으면 에러 메시지 반환
+    if (!row) {
+      return res.status(404).json({ error: '아티클을 찾을 수 없습니다.' });
+    }
 
-})
+    // 3. 삭제 요청자의 user_id와 아티클의 user_id가 일치하는지 확인
+    if (row.user_id !== userId) {
+      return res.status(403).json({ error: '권한이 없습니다.' });
+    }
+
+    // 4. 일치하면 아티클 삭제
+    const deleteSql = 'DELETE FROM articles WHERE id = ?';
+    db.run(deleteSql, [articleId], function (err) {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: `${this.changes}개의 아티클이 삭제되었습니다.` });
+    });
+  });
+});
+
 
 // 로그인 필요
 // 게시글이 본인인지 확인도 필요(추후적용예정)
-app.put('/articles/:id', authMiddleware, (req, res)=>{
-  let id = req.params.id
-  // let title = req.body.title
-  // let content = req.body.content
-  let {title, content} = req.body
- // SQL 업데이트 쿼리 (파라미터 바인딩 사용)
- const sql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
- db.run(sql, [title, content, id], function(err) {
-   if (err) {
-     console.error('업데이트 에러:', err.message);
-     return res.status(500).json({ error: err.message });
-   }
-   // this.changes: 영향을 받은 행의 수
-   res.json({ message: '게시글이 업데이트되었습니다.', changes: this.changes });
- });
+app.put('/articles/:id', authMiddleware, (req, res) => {
+  const userId = req.user.id; // 요청한 사용자의 id
+  const articleId = req.params.id; // 수정할 아티클의 id
+  console.log(userId)
+  // 클라이언트로부터 받은 제목과 내용
+  const { title, content } = req.body;
 
-})
+  // 1. 수정할 아티클의 user_id를 조회
+  const sql = 'SELECT user_id FROM articles WHERE id = ?';
+  db.get(sql, [articleId], (err, row) => {
+    if (err) {
+      console.error('업데이트 에러:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    // 2. 아티클이 없으면 에러 메시지 반환
+    if (!row) {
+      return res.status(404).json({ error: '아티클을 찾을 수 없습니다.' });
+    }
+
+    // 3. 수정 요청자의 user_id와 아티클의 user_id가 일치하는지 확인
+    if (row.user_id !== userId) {
+      return res.status(403).json({ error: '권한이 없습니다.' });
+    }
+
+    // 4. 일치하면 게시글 업데이트
+    const updateSql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
+    db.run(updateSql, [title, content, articleId], function (err) {
+      if (err) {
+        console.error('업데이트 에러:', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json({ message: '게시글이 업데이트되었습니다.', changes: this.changes });
+    });
+  });
+});
 
 
 

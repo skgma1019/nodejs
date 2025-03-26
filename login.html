@@ -4,20 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-image: url('https://upload-os-bbs.hoyolab.com/upload/2022/09/16/249488195/a5c9b0c5fa06b15ff86ae802ca3b589b_6761320286794481076.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            width: 40%;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            margin-top: 100px;
+        }
+        h2 {
+            color: #1a237e;
+            font-weight: bold;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #1a237e;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        button {
+            background: #5c6bc0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #3949ab;
+        }
+        .signup-link, .back-to-home {
+            color: #1a237e;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .signup-link:hover, .back-to-home:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>로그인</h2>
-    <form id="loginForm">
-        <label for="email">이메일:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">로그인</button>
-    </form>
-    <p id="message"></p>
-    <p onclick="location.href='index.html'">돌아가기</p>
+    <div class="container">
+        <h2>로그인</h2>
+        <form id="loginForm">
+            <label for="email">이메일:</label><br>
+            <input type="email" id="email" name="email" required><br>
+            
+            <label for="password">비밀번호:</label><br>
+            <input type="password" id="password" name="password" required><br>
+            
+            <button type="submit">로그인</button>
+        </form>
+
+        <p id="message"></p>
+        
+        <!-- 회원가입 페이지로 이동하는 링크 -->
+        <p>회원가입이 아직 없으신가요? <a href="users.html" class="signup-link">회원가입 하러 가기</a></p>
+
+        <!-- 메인 페이지로 돌아가는 링크 추가 -->
+        <p><a href="index.html" class="back-to-home">메인 페이지로 돌아가기</a></p>
+    </div>
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
