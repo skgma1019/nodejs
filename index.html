@@ -3,268 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ra</title>
+    <title>블로그</title>
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-image: url('https://upload-os-bbs.hoyolab.com/upload/2022/09/16/249488195/a5c9b0c5fa06b15ff86ae802ca3b589b_6761320286794481076.jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        .container {
-            width: 60%;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            margin-top: 50px;
-        }
-        h1 {
-            color: #1a237e;
-            font-weight: bold;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input, textarea {
-            width: 90%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 2px solid #1a237e;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        button {
-            background: #5c6bc0;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #3949ab;
-        }
-        .article {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            position: relative;
-        }
-        .article h3 {
-            color: #283593;
-        }
-        .delete-btn, .edit-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #d32f2f;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .delete-btn:hover, .edit-btn:hover {
-            background: #b71c1c;
-        }
-        .login-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #5c6bc0;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        .login-btn:hover {
-            background: #3949ab;
-        }
-        .comment-form {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .comment-form textarea {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .comments {
-            margin-top: 20px;
-        }
-        .comment {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { width: 80%; margin: auto; }
+        header { background: #333; color: white; padding: 15px; text-align: center; }
+        .btn { padding: 10px; margin: 5px; cursor: pointer; }
+        .post { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .form-container { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
+        input, textarea, button { display: block; width: 100%; margin-top: 10px; padding: 10px; }
     </style>
 </head>
 <body>
-    <button class="login-btn" onclick="location.href='login.html'">로그인</button>
-    <div class="container">
-        <h1>게시판</h1>
-        <form id="articleForm">
-            <input type="text" id="title" placeholder="제목" required><br>
-            <textarea id="content" placeholder="내용" required></textarea><br>
-            <button type="submit">게시글 작성</button>
-        </form>
+    <header>
+        <h1>블로그</h1>
+        <button class="btn" onclick="location.href='login.html'">로그인</button>
+        <button class="btn" onclick="location.href='users.html'">회원가입</button>
+    </header>
+    
+    <div class="container" id="content">
+        <h2>게시글 목록</h2>
         <div id="articles"></div>
+        
+        <div class="form-container">
+            <h2>글 작성</h2>
+            <input type="text" id="title" placeholder="제목">
+            <textarea id="content" placeholder="내용"></textarea>
+            <button onclick="submitArticle()">게시</button>
+        </div>
     </div>
 
     <script>
-        async function fetchArticles() {
+        async function loadArticles() {
             const response = await fetch('http://localhost:3000/articles');
             const articles = await response.json();
             const articlesDiv = document.getElementById('articles');
             articlesDiv.innerHTML = '';
-            
-            articles.slice().reverse().forEach(article => {
-                const articleElement = document.createElement('div');
-                articleElement.classList.add('article');
-                articleElement.innerHTML = `
-                    <h3 id="title-${article.id}">${article.title}</h3>
-                    <p id="content-${article.id}">${article.content}</p>
-                    <small>${article.email}</small>
-                    <button class="delete-btn" onclick="deleteArticle(${article.id})">삭제</button>
-                    <button class="edit-btn" onclick="editArticle(${article.id})">수정</button>
-                    <div class="comments" id="comments-${article.id}">
-                        <h4>댓글</h4>
-                        <div id="comments-list-${article.id}"></div>
-                        <div class="comment-form">
-                            <textarea id="comment-content-${article.id}" placeholder="댓글을 작성하세요..."></textarea>
-                            <button onclick="submitComment(${article.id})">댓글 작성</button>
-                        </div>
-                    </div>
-                `;
-                articlesDiv.appendChild(articleElement);
-                fetchComments(article.id);
+            articles.forEach(article => {
+                articlesDiv.innerHTML += `<div class='post'>
+                    <h3>${article.title}</h3>
+                    <p>${article.content}</p>
+                    <small>작성자: ${article.email}</small>
+                </div>`;
             });
         }
-
-        async function fetchComments(articleId) {
-            const response = await fetch(`http://localhost:3000/articles/${articleId}/comments`);
-            const comments = await response.json();
-            const commentsList = document.getElementById(`comments-list-${articleId}`);
-            commentsList.innerHTML = '';
-
-            comments.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.classList.add('comment');
-                commentElement.innerHTML = ` 
-                    <p>${comment.content}</p>
-                    <small>${comment.email} - ${comment.created_at}</small>
-                `;
-                commentsList.appendChild(commentElement);
-            });
-        }
-
-        async function submitComment(articleId) {
-            const content = document.getElementById(`comment-content-${articleId}`).value;
-            if (!content) {
-                return alert('댓글을 입력해주세요!');
-            }
-
-            const response = await fetch(`http://localhost:3000/articles/${articleId}/comments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({ content })
-            });
-
-            if (response.ok) {
-                fetchComments(articleId);
-                document.getElementById(`comment-content-${articleId}`).value = '';
-            }
-        }
-
-        async function deleteArticle(id) {
-            try {
-                const response = await fetch(`http://localhost:3000/articles/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (response.ok) {
-                    alert('게시글이 삭제되었습니다.');
-                    fetchArticles();
-                } else {
-                    alert('게시글 삭제에 실패했습니다.');
-                }
-            } catch (error) {
-                console.error('삭제 실패:', error);
-                alert('삭제 중 오류가 발생했습니다.');
-            }
-        }
-
-        async function editArticle(id) {
-            const title = document.getElementById(`title-${id}`).innerText;
-            const content = document.getElementById(`content-${id}`).innerText;
-
-            const newTitle = prompt('수정할 제목을 입력하세요:', title);
-            const newContent = prompt('수정할 내용을 입력하세요:', content);
-
-            if (newTitle && newContent) {
-                const response = await fetch(`http://localhost:3000/articles/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ title: newTitle, content: newContent })
-                });
-
-                if (response.ok) {
-                    alert('게시글이 수정되었습니다.');
-                    fetchArticles();
-                } else {
-                    alert('게시글 수정에 실패했습니다.');
-                }
-            }
-        }
-
-        document.getElementById('articleForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        
+        async function submitArticle() {
             const title = document.getElementById('title').value;
             const content = document.getElementById('content').value;
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
 
             const response = await fetch('http://localhost:3000/articles', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ title, content })
             });
-
+            
             if (response.ok) {
-                fetchArticles();
-                document.getElementById('articleForm').reset();
+                alert('게시글이 작성되었습니다.');
+                loadArticles();
+            } else {
+                alert('게시글 작성에 실패했습니다.');
             }
-        });
+        }
 
-        fetchArticles();
+        loadArticles();
     </script>
 </body>
 </html>

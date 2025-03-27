@@ -17,3 +17,6 @@ db에 있는 회원정보로 로그인(http://localhost:3000/login)
 -> 로그인 성공과 함께 token값 생성
 -> headers에 있는 value -> bearer 뒤에 ""제외하고 붙여넣기
 ->http://localhost:3000/articles에서 게시글 작성 가능(토큰값이 없으면 작성 불가)
+
+# env파일 생성하기
+.env파일을 만들고 SECRET_KEY = "아무거나"를 넣어야 실행이 가능하다.
